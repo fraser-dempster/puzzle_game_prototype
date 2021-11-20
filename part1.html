@@ -1,0 +1,216 @@
+<!doctype html> 
+
+<!-- Boiler plate html -->
+
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 1</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script> <!-- getting Phaser 3 -->
+    <script src="./smartcontroller.min.js"> </script> <!-- getting smartcontroller -->
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="qrcode"></div>
+
+
+<script type="text/javascript">
+
+    // configuring the phaser game
+    var config = {
+        type: Phaser.AUTO, // can be either Phaser.CANVAS, Phaser.WEBGL, or Phaser.AUTO (AUTO tries using WEBGL and if that doesn't work it uses CANVAS)
+        width: 800, // setting the width of the canvas element
+        height: 600, // setting the height of the canvas element
+        physics: { // the arcade physics system provided by Phaser
+          default: 'arcade',
+          arcade: {
+              gravity: { y: 300 },
+              debug: false
+          }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config); // This starts Phaser
+    var score = 0;
+    var scoreText;
+
+
+    function preload () // Phaser looks for preload when it starts and will load anything defined in it
+    {
+      this.load.image('sky', 'assets/sky.png');
+      this.load.image('ground', 'assets/platform.png');
+      this.load.image('star', 'assets/star.png');
+      this.load.image('bomb', 'assets/bomb.png');
+      this.load.spritesheet('dude', 
+        'assets/dude.png',
+        { frameWidth: 32, frameHeight: 48 }
+      );
+    }
+
+    function create ()
+    {
+      this.add.image(400, 300, 'sky');
+
+      /**
+       * A new Static Physics Group is created and assigned to platforms.
+       * In Arcade Physics (what Phaser uses) there are dynamic and static physics bodies.
+       * A dynamic body is one that can move around via forces such as velocity and acceleration.
+       * A Static Body simply has a position and size. Gravity won't affect it.
+      **/
+
+      platforms = this.physics.add.staticGroup(); // adding a group that has physics
+
+      // now use the platforms var to create multiple platforms with physics
+      platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
+      // Need refresh so the physics systems knows it's been doubled
+
+      platforms.create(600, 400, 'ground');
+      platforms.create(50, 250, 'ground');
+      platforms.create(750, 220, 'ground');
+
+      // creating stars
+      stars = this.physics.add.group({ // dynamic group so stars bounce
+        key: 'star',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+      });
+
+      stars.children.iterate(function (child) {
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+      });
+
+      // creating the sprite (player)
+      player = this.physics.add.sprite(100, 450, 'dude'); // loaded as sprite because it has animation frames
+
+      player.setBounce(0.2);
+      player.setCollideWorldBounds(true); // collider
+
+      this.physics.add.collider(player, platforms); // checks for collisions between the two objects
+      this.physics.add.collider(stars, platforms); // checks for collisions between stars and platforms
+      this.physics.add.overlap(player, stars, collectStar, null, this); // checks if the player overlaps with a star
+
+      scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+      // animations
+      this.anims.create({
+          key: 'left',
+          frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+          frameRate: 10,
+          repeat: -1
+      });
+
+      this.anims.create({
+          key: 'turn',
+          frames: [ { key: 'dude', frame: 4 } ],
+          frameRate: 20
+      });
+
+      this.anims.create({
+          key: 'right',
+          frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+          frameRate: 10,
+          repeat: -1
+      });
+
+      // creating enemies
+      bombs = this.physics.add.group();
+
+      this.physics.add.collider(bombs, platforms);
+
+      this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+      cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    // where the controls live
+    let controller;
+    let flag = false;
+
+    window.addEventListener('load', function() { // I'm only using this to make sure the script is loaded so if you have a better way you can screp this line
+      const simplePeer = new smartcontroller.NesSmartController(123456); //you should call this line and next line only once so you dont want it in the update loop, also not sure if having 1 as an id is long enough never thought of it
+      simplePeer.createQrCode('https://emmapoliakova.github.io/webpack-test/nesController.html', 'qrcode', 150, 150, '1');
+
+      simplePeer.on("controller", function(nes){ // this can also be outside the update loop that is a listener on it's own
+        controller = nes; 
+        flag=true;
+      })
+    })
+
+    function update ()
+    {
+      if (flag == true) {
+
+        if (controller.buttons['right'] == true) {
+          player.setVelocityX(160);
+
+          player.anims.play('right', true);
+        }
+        else if (controller.buttons['left'] == true) {
+          player.setVelocityX(-160);
+
+          player.anims.play('left', true);
+        }
+        else
+          {
+            player.setVelocityX(0);
+
+            player.anims.play('turn');
+          }
+        if (controller.buttons['up'] && player.body.touching.down) {
+          player.setVelocityY(-330);
+        }
+      }
+
+    }
+
+    // new function, removing the star if the player overlaps with it
+    function collectStar (player, star)
+    {
+        star.disableBody(true, true);
+
+        score += 10;
+        scoreText.setText('Score: ' + score);
+
+        if (stars.countActive(true) === 0)
+        {
+            stars.children.iterate(function (child) {
+
+                child.enableBody(true, child.x, 0, true, true);
+
+            });
+
+            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+            var bomb = bombs.create(x, 16, 'bomb');
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+        }
+    }
+
+      function hitBomb (player, bomb)
+        {
+            this.physics.pause();
+
+            player.setTint(0xff0000);
+
+            player.anims.play('turn');
+
+            gameOver = true;
+        }
+
+</script>
+
+</body>
+</html>
