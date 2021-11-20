@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-
+  <div>SCAN ME TO PLAY!</div>
 <div id="qrcode"></div>
 
 
@@ -137,7 +137,7 @@
     let flag = false;
 
     window.addEventListener('load', function() { // I'm only using this to make sure the script is loaded so if you have a better way you can screp this line
-      const simplePeer = new smartcontroller.NesSmartController(123456); //you should call this line and next line only once so you dont want it in the update loop, also not sure if having 1 as an id is long enough never thought of it
+      const simplePeer = new smartcontroller.NesSmartController(); // the number 123456 is the controller id, if you leave it blank it's random so mutliple can use the website.
       simplePeer.createQrCode('https://emmapoliakova.github.io/webpack-test/nesController.html', 'qrcode', 150, 150, '1');
 
       simplePeer.on("controller", function(nes){ // this can also be outside the update loop that is a listener on it's own
