@@ -208,16 +208,15 @@
     function movement (playerController, player) {
       if (playerController.buttons['right'] == true) {
           player.setVelocityX(160);
+          console.log("right equals true");
 
           player.anims.play('right', true);
         }
         else if (playerController.buttons['left'] == true) {
-          player.setVelocityX(-160);
+          player.body.velocity.x = -150;
+          console.log("left equals true");
 
           player.anims.play('left', true);
-        }
-        else if (playerController.buttons['up'] && player.body.touching.down) {
-          player.setVelocityY(-330);
         }
         else
           {
@@ -225,6 +224,12 @@
 
             player.anims.play('turn');
           }
+        
+        if (playerController.buttons['up'] && player.body.touching.down) {
+          player.setVelocityY(-150);
+          console.log("jump equals true");
+        }
+
 
     }
 
