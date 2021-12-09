@@ -160,15 +160,13 @@
 
     function update ()
     {
+
       var player1Controller;
       var player2Controller;
 
-      // const player1;
-      // const player2;
       var controllerList = simplePeer.controllerList;
       var size = Object.keys(simplePeer.controllerList).length;
 
-      // console.log(size);
       if (size == 1) {
         player1Controller = controllerList[Object.keys(controllerList)[0]];
         movement(player1Controller, player);
@@ -178,11 +176,6 @@
         player2Controller = controllerList[Object.keys(controllerList)[1]];
         movement(player1Controller, player);
         movement(player2Controller, player2);
-
-
-
-        // console.log(controllerList[Object.keys(controllerList)[0]]);
-        // console.log(controllerList[Object.keys(controllerList)[1]]);
       }
 
       if (score === 10) {
@@ -190,27 +183,13 @@
         score = 0;
       }
 
-      // for (const item in simplePeer.controllerList) {
-      //   player1
-      // }
-
       // if (flag == true) {
-      //   // console.log(simplePeer.controllerList);
-      //   // for (const item in simplePeer.controllerList) {
-      //   //   // console.log("The first item is: " + item);
-      //   //   console.log(JSON.stringify(controller.buttons));
-      //   // }
-      //   // console.log(JSON.stringify(controller.connection));
-
-        
-
-
-
 
       // }
 
     }
 
+    // created a method so movement can be applied to multiple players
     function movement (playerController, player) {
       if (playerController.buttons['right'] == true) {
           player.setVelocityX(160);
@@ -231,6 +210,7 @@
             player.anims.play('turn');
           }
         
+        // this has to be last otherwise phaser messes up
         if (playerController.buttons['up'] && player.body.touching.down) {
           player.setVelocityY(-350);
           console.log("jump equals true");
