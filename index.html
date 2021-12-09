@@ -74,19 +74,20 @@
       platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
       // Need refresh so the physics systems knows it's been doubled
 
-      platforms.create(600, 400, 'ground');
-      platforms.create(50, 250, 'ground');
+      // platforms.create(600, 400, 'ground');
+      // platforms.create(50, 250, 'ground');
       platforms.create(750, 220, 'ground');
 
       // creating stars
       stars = this.physics.add.group({ // dynamic group so stars bounce
         key: 'star',
-        repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
+        repeat: 0,
+        setXY: { x: 700, y: 0, stepX: 70 }
       });
 
       stars.children.iterate(function (child) {
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        child.setScale(2);
       });
 
       // creating the sprite (player)
@@ -188,20 +189,20 @@
       //   player1
       // }
 
-      if (flag == true) {
-        // console.log(simplePeer.controllerList);
-        // for (const item in simplePeer.controllerList) {
-        //   // console.log("The first item is: " + item);
-        //   console.log(JSON.stringify(controller.buttons));
-        // }
-        // console.log(JSON.stringify(controller.connection));
+      // if (flag == true) {
+      //   // console.log(simplePeer.controllerList);
+      //   // for (const item in simplePeer.controllerList) {
+      //   //   // console.log("The first item is: " + item);
+      //   //   console.log(JSON.stringify(controller.buttons));
+      //   // }
+      //   // console.log(JSON.stringify(controller.connection));
 
         
 
 
 
 
-      }
+      // }
 
     }
 
