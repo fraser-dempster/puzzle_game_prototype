@@ -71,7 +71,7 @@
       platforms = this.physics.add.staticGroup(); // adding a group that has physics
 
       // now use the platforms var to create multiple platforms with physics
-      // platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
+      platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
       // Need refresh so the physics systems knows it's been doubled
 
       platforms.create(600, 400, 'ground');
@@ -99,6 +99,9 @@
       player2.setBounce(0.2);
       player2.setCollideWorldBounds(true); // collider
 
+
+      this.physics.add.collider(player, player2); //players don't go through each other
+      this.physics.add.collider(player2, player);
       this.physics.add.collider(player, platforms); // checks for collisions between the two objects
       this.physics.add.collider(stars, platforms); // checks for collisions between stars and platforms
       this.physics.add.overlap(player, stars, collectStar, null, this); // checks if the player overlaps with a star
@@ -213,15 +216,16 @@
 
           player.anims.play('left', true);
         }
+        else if (playerController.buttons['up'] && player.body.touching.down) {
+          player.setVelocityY(-330);
+        }
         else
           {
             player.setVelocityX(0);
 
             player.anims.play('turn');
           }
-        if (playerController.buttons['up'] && player.body.touching.down) {
-          player.setVelocityY(-330);
-        }
+
     }
 
     // new function, removing the star if the player overlaps with it
