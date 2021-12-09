@@ -71,7 +71,7 @@
       platforms = this.physics.add.staticGroup(); // adding a group that has physics
 
       // now use the platforms var to create multiple platforms with physics
-      platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
+      // platforms.create(400, 568, 'ground').setScale(2).refreshBody(); // scale is used to make the physics object bigger - basically doubling the image.
       // Need refresh so the physics systems knows it's been doubled
 
       platforms.create(600, 400, 'ground');
@@ -91,13 +91,20 @@
 
       // creating the sprite (player)
       player = this.physics.add.sprite(100, 450, 'dude'); // loaded as sprite because it has animation frames
+      player2 = this.physics.add.sprite(200, 450, 'dude'); // loaded as sprite because it has animation frames
 
       player.setBounce(0.2);
       player.setCollideWorldBounds(true); // collider
 
+      player2.setBounce(0.2);
+      player2.setCollideWorldBounds(true); // collider
+
       this.physics.add.collider(player, platforms); // checks for collisions between the two objects
       this.physics.add.collider(stars, platforms); // checks for collisions between stars and platforms
       this.physics.add.overlap(player, stars, collectStar, null, this); // checks if the player overlaps with a star
+
+      this.physics.add.collider(player2, platforms); // checks for collisions between the two objects
+      this.physics.add.overlap(player2, stars, collectStar, null, this); // checks if the player overlaps with a star
 
       scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
@@ -135,9 +142,9 @@
     // where the controls live
     let controller;
     let flag = false;
-
+    var simplePeer;
     window.addEventListener('load', function() { // I'm only using this to make sure the script is loaded so if you have a better way you can screp this line
-      const simplePeer = new smartcontroller.NesSmartController(); // the number 123456 is the controller id, if you leave it blank it's random so mutliple can use the website.
+      simplePeer = new smartcontroller.NesSmartController(1); // the number 123456 is the controller id, if you leave it blank it's random so mutliple can use the website.
       simplePeer.createQrCode('https://emmapoliakova.github.io/webpack-test/nesController.html', 'qrcode', 150, 150, '1');
 
       simplePeer.on("controller", function(nes){ // this can also be outside the update loop that is a listener on it's own
@@ -146,16 +153,62 @@
       })
     })
 
+
     function update ()
     {
-      if (flag == true) {
+      var player1Controller;
+      var player2Controller;
 
-        if (controller.buttons['right'] == true) {
+      // const player1;
+      // const player2;
+      var controllerList = simplePeer.controllerList;
+      var size = Object.keys(simplePeer.controllerList).length;
+
+      // console.log(size);
+      if (size == 1) {
+        player1Controller = controllerList[Object.keys(controllerList)[0]];
+        movement(player1Controller, player);
+      }
+      if (size == 2) {
+        player1Controller = controllerList[Object.keys(controllerList)[0]];
+        player2Controller = controllerList[Object.keys(controllerList)[1]];
+        movement(player1Controller, player);
+        movement(player2Controller, player2);
+
+
+
+        // console.log(controllerList[Object.keys(controllerList)[0]]);
+        // console.log(controllerList[Object.keys(controllerList)[1]]);
+      }
+
+      // for (const item in simplePeer.controllerList) {
+      //   player1
+      // }
+
+      if (flag == true) {
+        // console.log(simplePeer.controllerList);
+        // for (const item in simplePeer.controllerList) {
+        //   // console.log("The first item is: " + item);
+        //   console.log(JSON.stringify(controller.buttons));
+        // }
+        // console.log(JSON.stringify(controller.connection));
+
+        
+
+
+
+
+      }
+
+    }
+
+    function movement (playerController, player) {
+      if (playerController.buttons['right'] == true) {
           player.setVelocityX(160);
 
           player.anims.play('right', true);
         }
-        else if (controller.buttons['left'] == true) {
+        else if (playerController.buttons['left'] == true) {
           player.setVelocityX(-160);
 
           player.anims.play('left', true);
@@ -166,11 +219,9 @@
 
             player.anims.play('turn');
           }
-        if (controller.buttons['up'] && player.body.touching.down) {
+        if (playerController.buttons['up'] && player.body.touching.down) {
           player.setVelocityY(-330);
         }
-      }
-
     }
 
     // new function, removing the star if the player overlaps with it
