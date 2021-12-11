@@ -94,9 +94,11 @@
       // creating the sprite (player)
       player = this.physics.add.sprite(100, 450, 'dude'); // loaded as sprite because it has animation frames
       player2 = this.physics.add.sprite(200, 450, 'dude'); // loaded as sprite because it has animation frames
+      player3 = this.physics.add.sprite(300, 450, 'dude'); // loaded as sprite because it has animation frames
 
       playerList.push(player);
       playerList.push(player2);
+      playerList.push(player3);
 
       player.setBounce(0.2);
       player.setCollideWorldBounds(true); // collider
@@ -104,15 +106,22 @@
       player2.setBounce(0.2);
       player2.setCollideWorldBounds(true); // collider
 
+      player3.setBounce(0.2);
+      player3.setCollideWorldBounds(true); // collider
+
 
       this.physics.add.collider(player, player2); //players don't go through each other
       this.physics.add.collider(player2, player);
+      this.physics.add.collider(player2, player3);
       this.physics.add.collider(player, platforms); // checks for collisions between the two objects
       this.physics.add.collider(stars, platforms); // checks for collisions between stars and platforms
       this.physics.add.overlap(player, stars, collectStar, null, this); // checks if the player overlaps with a star
 
       this.physics.add.collider(player2, platforms); // checks for collisions between the two objects
       this.physics.add.overlap(player2, stars, collectStar, null, this); // checks if the player overlaps with a star
+
+      this.physics.add.collider(player3, platforms); // checks for collisions between the two objects
+      this.physics.add.overlap(player3, stars, collectStar, null, this); // checks if the player overlaps with a star
 
       scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
@@ -161,16 +170,10 @@
       })
     })
 
-    // make array of players
-    // loop through size of controllerList
-    // use each controllerlist
-
 
     function update ()
     {
 
-      var player1Controller;
-      var player2Controller;
 
       var controllerList = simplePeer.controllerList;
       var size = Object.keys(simplePeer.controllerList).length;
