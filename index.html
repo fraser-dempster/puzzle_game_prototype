@@ -43,6 +43,7 @@
     var game = new Phaser.Game(config); // This starts Phaser
     var score = 0;
     var scoreText;
+    var playerList = [];
 
 
     function preload () // Phaser looks for preload when it starts and will load anything defined in it
@@ -93,6 +94,9 @@
       // creating the sprite (player)
       player = this.physics.add.sprite(100, 450, 'dude'); // loaded as sprite because it has animation frames
       player2 = this.physics.add.sprite(200, 450, 'dude'); // loaded as sprite because it has animation frames
+
+      playerList.push(player);
+      playerList.push(player2);
 
       player.setBounce(0.2);
       player.setCollideWorldBounds(true); // collider
@@ -157,6 +161,10 @@
       })
     })
 
+    // make array of players
+    // loop through size of controllerList
+    // use each controllerlist
+
 
     function update ()
     {
@@ -167,16 +175,25 @@
       var controllerList = simplePeer.controllerList;
       var size = Object.keys(simplePeer.controllerList).length;
 
-      if (size == 1) {
-        player1Controller = controllerList[Object.keys(controllerList)[0]];
-        movement(player1Controller, player);
+
+      // for (let i = 0; i < playerList.length; i++) {
+      // console.log(playerList[i]);
+      // }
+
+      for (let i = 0; i < size; i++) {
+        movement(controllerList[Object.keys(controllerList)[i]], playerList[i]);
       }
-      if (size == 2) {
-        player1Controller = controllerList[Object.keys(controllerList)[0]];
-        player2Controller = controllerList[Object.keys(controllerList)[1]];
-        movement(player1Controller, player);
-        movement(player2Controller, player2);
-      }
+
+      // if (size == 1) {
+      //   player1Controller = controllerList[Object.keys(controllerList)[0]];
+      //   movement(player1Controller, player);
+      // }
+      // if (size == 2) {
+      //   player1Controller = controllerList[Object.keys(controllerList)[0]];
+      //   player2Controller = controllerList[Object.keys(controllerList)[1]];
+      //   movement(player1Controller, player);
+      //   movement(player2Controller, player2);
+      // }
 
       if (score === 10) {
         alert('You Win!');
