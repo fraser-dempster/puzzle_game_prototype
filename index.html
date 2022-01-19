@@ -10,14 +10,15 @@
     <script src="./smartcontroller.min.js"> </script> <!-- getting smartcontroller -->
     <style type="text/css">
         body {
-            margin: 0;
+            margin-left: 300px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
   <div>SCAN ME TO PLAY!</div>
 <div id="qrcode"></div>
-
+<div>Figure out how to reach the star to win! Use the arrow keys to move and jump!</div>
 
 <script type="text/javascript">
 
@@ -94,11 +95,9 @@
       // creating the sprite (player)
       player = this.physics.add.sprite(100, 450, 'dude'); // loaded as sprite because it has animation frames
       player2 = this.physics.add.sprite(200, 450, 'dude'); // loaded as sprite because it has animation frames
-      player3 = this.physics.add.sprite(300, 450, 'dude'); // loaded as sprite because it has animation frames
 
       playerList.push(player);
       playerList.push(player2);
-      playerList.push(player3);
 
       player.setBounce(0.2);
       player.setCollideWorldBounds(true); // collider
@@ -106,22 +105,15 @@
       player2.setBounce(0.2);
       player2.setCollideWorldBounds(true); // collider
 
-      player3.setBounce(0.2);
-      player3.setCollideWorldBounds(true); // collider
-
 
       this.physics.add.collider(player, player2); //players don't go through each other
       this.physics.add.collider(player2, player);
-      this.physics.add.collider(player2, player3);
       this.physics.add.collider(player, platforms); // checks for collisions between the two objects
       this.physics.add.collider(stars, platforms); // checks for collisions between stars and platforms
       this.physics.add.overlap(player, stars, collectStar, null, this); // checks if the player overlaps with a star
 
       this.physics.add.collider(player2, platforms); // checks for collisions between the two objects
       this.physics.add.overlap(player2, stars, collectStar, null, this); // checks if the player overlaps with a star
-
-      this.physics.add.collider(player3, platforms); // checks for collisions between the two objects
-      this.physics.add.overlap(player3, stars, collectStar, null, this); // checks if the player overlaps with a star
 
       scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
@@ -158,7 +150,6 @@
 
     // where the controls live
     let controller;
-    let flag = false;
     var simplePeer;
     window.addEventListener('load', function() { // I'm only using this to make sure the script is loaded so if you have a better way you can screp this line
       simplePeer = new smartcontroller.NesSmartController(); // the number 123456 is the controller id, if you leave it blank it's random so mutliple can use the website.
@@ -166,7 +157,6 @@
 
       simplePeer.on("controller", function(nes){ // this can also be outside the update loop that is a listener on it's own
         controller = nes; 
-        flag=true;
       })
     })
 
@@ -202,10 +192,6 @@
         alert('You Win!');
         score = 0;
       }
-
-      // if (flag == true) {
-
-      // }
 
     }
 
